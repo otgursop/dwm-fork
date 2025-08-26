@@ -21,23 +21,28 @@ static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;        /* 0 means no systray */
 
-static const char *fonts[]          = { "JetBrainsMono Nerd Font:style=Bold:size=11" };
-static const char dmenufont[]       = "JetBrainsMono Nerd Font:style=Bold:size=11";
+static const char *fonts[]          = { "JetBrainsMonoNL Nerd Font:style=ExtraBold:size=11" };
+static const char dmenufont[]       = "JetBrainsMonoNL Nerd Font:style=ExtraBold:size=11";
 
+// COLORS
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#475933";
+static const char col_cyan[]        = "#435144"; //475933
+
+static const char col_border_idle[]	= "#262d26"; //2e382e
+static const char col_border_act[]  = "#435144";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeNorm] = { col_gray3, col_gray1, col_border_idle },
+	[SchemeSel]  = { col_gray4, col_cyan,  col_border_act  },
 };
 
+
 /* TAGS */
-static const char *tags[] = { "a", "b", "c", "d", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "a", "b", "c", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -47,6 +52,7 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ NULL,       NULL,       NULL,       0,            False,       -1 },
 };
+
 
 /* LAYOUT(S) */
 static const float mfact     = 0.5; /* factor of master area size [0.05..0.95] */
@@ -63,7 +69,9 @@ static const Layout layouts[] = {
 };
 
 
-/* KEY DEFINITIONS */
+/* MACROS */
+
+// KEY DEFINITIONS
 #define MODKEY Mod4Mask // MOD_KEY
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
@@ -71,21 +79,47 @@ static const Layout layouts[] = {
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
-
-/* SHELL COMMANDS HELPER */
+// SHELL COMMANDS HELPER
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
+// VOLUME MACROS
+#include <X11/XF86keysym.h>
 
 /* USER COMMANDS */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-p", ">>", NULL };
+static const char *screenshot[] = { "flameshot", "gui", NULL };
+static const char *lock[] = { "i3lock", "-i", "/home/hwd/Pictures/Wallpapers/i3lock/i3lock3.png", "-t", "-u", NULL };
+
 static const char *termcmd[]  = { "st", NULL };
+static const char *librewolf[] = { "librewolf", NULL };
+static const char *thunar[] = { "thunar", NULL };
 
 /* KEY MODIFIERS */
 static const Key keys[] = {
 	/* modifier                     key        function        argumenut */
+
+	// PROGRAMS
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ 0,							XK_Print,  spawn,		   {.v = screenshot } },
+	{ MODKEY,						XK_s,	   spawn,		   {.v = lock } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY|ShiftMask,				XK_b,	   spawn,		   {.v = librewolf } },
+	{ MODKEY|ShiftMask,				XK_e,	   spawn,	       {.v = thunar } },
+
+	/* DWMBLOCKS SIGNALS */
+	{ ShiftMask,					XK_Alt_L,  spawn,		   SHCMD("pkill -RTMIN+1 dwmblocks") },
+	{ Mod1Mask,						XK_Shift_L,spawn,		   SHCMD("pkill -RTMIN+1 dwmblocks") },
+
+	{ 0,							XF86XK_AudioLowerVolume, spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
+	{ 0,							XF86XK_AudioRaiseVolume, spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
+	{ 0,							XF86XK_AudioMute,        spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
+	/* ... */
+
+	// VOLUME CONTROL
+	{ 0,							XF86XK_AudioLowerVolume, spawn, SHCMD("pactl set-sink-volume 0 -3%") },
+	{ 0,							XF86XK_AudioRaiseVolume, spawn, SHCMD("pactl set-sink-volume 0 +3%") },
+	{ 0,							XF86XK_AudioMute,        spawn, SHCMD("pactl set-sink-mute 0 toggle") },
 
 	// INPLACEROTATE_PATCH
 	{ MODKEY|ShiftMask,             XK_j,      inplacerotate,  {.i = +1} },
@@ -100,8 +134,8 @@ static const Key keys[] = {
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_l,      incrogaps,      {.i = -1 } },
 	{ MODKEY|Mod4Mask|ControlMask,  XK_h,      incrigaps,      {.i = +1 } },
 	{ MODKEY|Mod4Mask|ControlMask,  XK_l,      incrigaps,      {.i = -1 } },
-	{ MODKEY|Mod4Mask,              XK_0,      togglegaps,     {0} },
-	{ MODKEY|Mod4Mask|ShiftMask,    XK_0,      defaultgaps,    {0} },
+	{ MODKEY|ShiftMask,             XK_0,      togglegaps,     {0} },
+	{ MODKEY|ControlMask,			XK_0,      defaultgaps,    {0} },
 	{ MODKEY,                       XK_y,      incrihgaps,     {.i = +1 } },
 	{ MODKEY,                       XK_o,      incrihgaps,     {.i = -1 } },
 	{ MODKEY|ControlMask,           XK_y,      incrivgaps,     {.i = +1 } },
@@ -114,6 +148,7 @@ static const Key keys[] = {
 	// TOGGLE BAR
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 
+	// IDK
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
@@ -126,6 +161,7 @@ static const Key keys[] = {
 	// KILL WINDOW
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
 
+	// LAYOUTS
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
@@ -134,12 +170,15 @@ static const Key keys[] = {
 	// TOGGLE FLOATING
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 
+	// IDK
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+
+	// TAGS
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -149,6 +188,8 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
+	
+	// QUIT/RESTART DWM
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
 
