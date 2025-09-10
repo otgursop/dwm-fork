@@ -2,13 +2,14 @@
 
 /* APPEARANCE */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
-static const unsigned int snap      = 5;       /* snap pixel */
+static const unsigned int snap      = 7;       /* snap pixel */
 
 // VANITYGAPS_PATCH
-static const unsigned int gappih    = 2;       /* horiz inner gap between windows */
-static const unsigned int gappiv    = 2;       /* vert inner gap between windows */
-static const unsigned int gappoh    = 2;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappih    = 0;       /* horiz inner gap between windows */
+static const unsigned int gappiv    = 0;       /* vert inner gap between windows */
+static const unsigned int gappoh    = 0;       /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov    = 0;       /* vert outer gap between windows and screen edge */
+
 static const int smartgaps          = 1;        /* 1 means no outer gap when there is only one window */
 
 static const int showbar            = 1;        /* 0 means no bar */
@@ -19,10 +20,10 @@ static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows sel
 static const unsigned int systrayonleft = 0;    /* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
-static const int showsystray        = 1;        /* 0 means no systray */
+static const int showsystray            = 0;        /* 0 means no systray */
 
-static const char *fonts[]          = { "MonaspiceKr Nerd Font:style=Medium:size=10.35" };
-static const char dmenufont[]       = "MonaspiceKr Nerd Font:style=Medium:size=10.35";
+static const char *fonts[]          = { "JetBrainsMono Nerd Font:style=Medium:size=11.10" }; 
+static const char dmenufont[]       = "JetBrainsMono Nerd Font:style=Medium:size=11.10";
 
 // COLORS
 static const char col_gray1[]       = "#222222";
@@ -33,7 +34,7 @@ static const char col_cyan[]        = "#435144"; //475933
 
 static const char col_panel[]       = "#151614";
 
-static const char col_border_idle[]	= "#262d26"; //2e382e
+static const char col_border_idle[]	= "#212121"; //2e382e
 static const char col_border_act[]  = "#435144";
 
 static const char *colors[][3]      = {
@@ -98,31 +99,38 @@ static const char *termcmd[]  = { "st", NULL };
 static const char *browser[] = { "firefox", NULL };
 static const char *filemanager[] = { "thunar", NULL };
 
+static const char *bluetoothmanager[] = { "st", "-e", "bluetoothctl", NULL };
+static const char *networkmanager[] = { "nm-connection-editor", NULL };
+
 /* KEY MODIFIERS */
 static const Key keys[] = {
 	/* modifier                     key        function        argumenut */
 
 	// PROGRAMS
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ 0,							XK_Print,  spawn,		   {.v = screenshot } },
-	{ MODKEY,						XK_s,	   spawn,		   {.v = lock } },
+	{ 0,							              XK_Print,  spawn,		       {.v = screenshot } },
+	{ MODKEY,					            	XK_s,	     spawn,		       {.v = lock } },
+
+  { MODKEY|ShiftMask,					    XK_b,	     spawn,		       {.v = bluetoothmanager } },
+  { MODKEY|ShiftMask,					    XK_n,	     spawn,		       {.v = networkmanager } },
+
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY|ShiftMask,				XK_b,	   spawn,		   {.v = browser } },
-	{ MODKEY|ShiftMask,				XK_e,	   spawn,	       {.v = filemanager } },
+	{ MODKEY|ShiftMask,			      	XK_v,	     spawn,          {.v = browser } },
+	{ MODKEY|ShiftMask,			      	XK_e,	     spawn,	         {.v = filemanager } },
 
 	/* DWMBLOCKS SIGNALS */
-	{ ShiftMask,					XK_Alt_L,  spawn,		   SHCMD("pkill -RTMIN+1 dwmblocks") },
-	{ Mod1Mask,						XK_Shift_L,spawn,		   SHCMD("pkill -RTMIN+1 dwmblocks") },
+	{ ShiftMask,				          	XK_Alt_L,  spawn,		       SHCMD("pkill -RTMIN+1 dwmblocks") },
+	{ Mod1Mask,					          	XK_Shift_L,spawn,		       SHCMD("pkill -RTMIN+1 dwmblocks") },
 
-	{ 0,							XF86XK_AudioLowerVolume, spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
-	{ 0,							XF86XK_AudioRaiseVolume, spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
-	{ 0,							XF86XK_AudioMute,        spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
+	{ 0,							              XF86XK_AudioLowerVolume, spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
+	{ 0,						              	XF86XK_AudioRaiseVolume, spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
+	{ 0,							              XF86XK_AudioMute,        spawn, SHCMD("pkill -RTMIN+2 dwmblocks") },
 	/* ... */
 
 	// VOLUME CONTROL
-	{ 0,							XF86XK_AudioLowerVolume, spawn, SHCMD("pactl set-sink-volume 0 -3%") },
-	{ 0,							XF86XK_AudioRaiseVolume, spawn, SHCMD("pactl set-sink-volume 0 +3%") },
-	{ 0,							XF86XK_AudioMute,        spawn, SHCMD("pactl set-sink-mute 0 toggle") },
+	{ 0,							XF86XK_AudioLowerVolume, spawn,          SHCMD("pactl set-sink-volume 0 -3%") },
+	{ 0,							XF86XK_AudioRaiseVolume, spawn,          SHCMD("pactl set-sink-volume 0 +3%") },
+	{ 0,							XF86XK_AudioMute,        spawn,          SHCMD("pactl set-sink-mute 0 toggle") },
 
 	// INPLACEROTATE_PATCH
 	{ MODKEY|ShiftMask,             XK_j,      inplacerotate,  {.i = +1} },
@@ -138,7 +146,7 @@ static const Key keys[] = {
 	// { MODKEY|Mod4Mask|ControlMask,  XK_h,      incrigaps,      {.i = +1 } },
 	// { MODKEY|Mod4Mask|ControlMask,  XK_l,      incrigaps,      {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_0,      togglegaps,     {0} },
-	{ MODKEY|ControlMask,			XK_0,      defaultgaps,    {0} },
+	{ MODKEY|ControlMask,			      XK_0,      defaultgaps,    {0} },
 	// { MODKEY,                       XK_y,      incrihgaps,     {.i = +1 } },
 	// { MODKEY,                       XK_o,      incrihgaps,     {.i = -1 } },
 	// { MODKEY|ControlMask,           XK_y,      incrivgaps,     {.i = +1 } },
