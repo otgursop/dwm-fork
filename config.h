@@ -92,15 +92,19 @@ static const Layout layouts[] = {
 /* USER COMMANDS */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_panel, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, "-p", ">>", NULL };
+
+// static const char *rofi_drun[] = { "rofi", "-show", "drun", NULL };
+// static const char *rofi_run[] = { "rofi", "-show", "run", NULL };
+
 static const char *screenshot[] = { "flameshot", "gui", NULL };
 static const char *lock[] = { "slock", NULL };
 
 static const char *termcmd[]  = { "st", NULL };
 static const char *browser[] = { "firefox", NULL };
-static const char *filemanager[] = { "thunar", NULL };
+static const char *file_manager[] = { "thunar", NULL };
 
-static const char *bluetoothmanager[] = { "st", "-e", "bluetoothctl", NULL };
-static const char *networkmanager[] = { "nm-connection-editor", NULL };
+static const char *bluetooth_manager[] = { "st", "-e", "bluetoothctl", NULL };
+static const char *network_manager[] = { "nm-connection-editor", NULL };
 
 /* KEY MODIFIERS */
 static const Key keys[] = {
@@ -108,15 +112,17 @@ static const Key keys[] = {
 
 	// PROGRAMS
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+  // { MODKEY,                       XK_p,      spawn,          {.v = rofi_run } },
+  // { MODKEY|ShiftMask,             XK_p,      spawn,          {.v = rofi_drun } },
 	{ 0,							              XK_Print,  spawn,		       {.v = screenshot } },
 	{ MODKEY,					            	XK_s,	     spawn,		       {.v = lock } },
 
-  { MODKEY|ShiftMask,					    XK_b,	     spawn,		       {.v = bluetoothmanager } },
-  { MODKEY|ShiftMask,					    XK_n,	     spawn,		       {.v = networkmanager } },
+  { MODKEY|ShiftMask,					    XK_b,	     spawn,		       {.v = bluetooth_manager } },
+  { MODKEY|ShiftMask,					    XK_n,	     spawn,		       {.v = network_manager } },
 
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,			      	XK_v,	     spawn,          {.v = browser } },
-	{ MODKEY|ShiftMask,			      	XK_e,	     spawn,	         {.v = filemanager } },
+	{ MODKEY|ShiftMask,			      	XK_e,	     spawn,	         {.v = file_manager } },
 
 	/* DWMBLOCKS SIGNALS */
 	{ ShiftMask,				          	XK_Alt_L,  spawn,		       SHCMD("pkill -RTMIN+1 dwmblocks") },
